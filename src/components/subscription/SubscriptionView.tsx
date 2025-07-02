@@ -6,22 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Crown, 
-  Calendar, 
-  Gift, 
-  Percent, 
-  Key, 
-  Package, 
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Zap,
-  Star,
-  Upgrade,
-  Download,
-  Copy
-} from 'lucide-react';
+import { Crown, Calendar, Gift, Percent, Key, Package, AlertCircle, CheckCircle, Clock, Zap, Star, Spade as Upgrade, Download, Copy } from 'lucide-react';
 
 export function SubscriptionView() {
   const [voucherCode, setVoucherCode] = useState('');
