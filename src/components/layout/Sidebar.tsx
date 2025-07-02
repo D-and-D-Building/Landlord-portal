@@ -17,7 +17,7 @@ import {
   Shield,
   User
 } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
+import { cn } from '@/lib/utils';
 
 interface SidebarProps {
   isOpen: boolean;
