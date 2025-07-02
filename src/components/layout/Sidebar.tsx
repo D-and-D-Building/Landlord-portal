@@ -15,7 +15,8 @@ import {
   X,
   Crown,
   Shield,
-  User
+  User,
+  Key
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +33,7 @@ const navigation = [
   { name: 'Payments', href: '/payments', icon: CreditCard },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Team', href: '/team', icon: UserPlus },
+  { name: 'Subscription', href: '/subscription', icon: Key },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
