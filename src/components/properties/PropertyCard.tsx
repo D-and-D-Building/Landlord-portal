@@ -43,11 +43,14 @@ export function PropertyCard({ property, viewMode }: PropertyCardProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
         <div className="flex items-center space-x-6">
-          <Image
-            src={property.image}
-            alt={property.name}
-            className="h-20 w-20 rounded-lg object-cover"
-          />
+          <div className="relative h-20 w-20 rounded-lg overflow-hidden">
+            <Image
+              src={property.image}
+              alt={property.name}
+              fill
+              className="object-cover"
+            />
+          </div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
@@ -89,7 +92,8 @@ export function PropertyCard({ property, viewMode }: PropertyCardProps) {
         <Image
           src={property.image}
           alt={property.name}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div className="absolute top-4 right-4">
           {getStatusBadge(property.status)}

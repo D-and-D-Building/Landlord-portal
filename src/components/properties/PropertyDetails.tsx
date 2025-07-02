@@ -155,11 +155,14 @@ export function PropertyDetails({ propertyId }: PropertyDetailsProps) {
       {/* Property Image and Basic Info */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Image
-            src={property.image}
-            alt={property.name}
-            className="w-full h-64 object-cover rounded-lg"
-          />
+          <div className="relative w-full h-64 rounded-lg overflow-hidden">
+            <Image
+              src={property.image}
+              alt={property.name}
+              fill
+              className="object-cover"
+            />
+          </div>
         </div>
         <div className="space-y-4">
           <Card>
