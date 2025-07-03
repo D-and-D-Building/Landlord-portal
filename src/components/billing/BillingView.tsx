@@ -18,9 +18,11 @@ import {
   Send,
   Eye
 } from 'lucide-react';
+import { CreateInvoiceModal } from './CreateInvoiceModal';
 
 export function BillingView() {
   const [selectedTab, setSelectedTab] = useState('invoices');
+  const [isCreateInvoiceModalOpen, setIsCreateInvoiceModalOpen] = useState(false);
 
   // Mock invoices data
   const invoices = [
@@ -132,7 +134,10 @@ export function BillingView() {
           <h1 className="text-3xl font-bold text-gray-900">Billing & Invoices</h1>
           <p className="mt-2 text-gray-600">Manage rent collection and billing</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setIsCreateInvoiceModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Create Invoice
         </Button>
@@ -307,55 +312,14 @@ export function BillingView() {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>This Month Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Invoiced</span>
-                  <span className="font-semibold">${billingSummary.thisMonth.invoiced.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Paid</span>
-                  <span className="font-semibold text-green-600">${billingSummary.thisMonth.paid.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Pending</span>
-                  <span className="font-semibold text-amber-600">${billingSummary.thisMonth.pending.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Collection Rate</span>
-                  <span className="font-semibold">
-                    {Math.round((billingSummary.thisMonth.paid / billingSummary.thisMonth.invoiced) * 100)}%
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Monthly Report
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Generate Rent Roll
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Payment Reminders
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
+        {/* ... existing content ... */}
+      </TabsContent>
       </Tabs>
+
+      <CreateInvoiceModal
+        isOpen={isCreateInvoiceModalOpen}
+        onClose={() => setIsCreateInvoiceModalOpen(false)}
+      />
     </div>
   );
 }

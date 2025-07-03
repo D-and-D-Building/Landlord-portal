@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MoreHorizontal, Mail, Phone, Calendar, DollarSign } from 'lucide-react';
+import Link from 'next/link';
 
 interface Tenant {
   id: number;
@@ -164,13 +165,14 @@ export function TenantCard({ tenant, viewMode, onViewDetails }: TenantCardProps)
           {getPaymentBadge(tenant.paymentStatus)}
         </div>
 
-        <Button 
-          className="w-full" 
-          variant="outline"
-          onClick={() => onViewDetails(tenant.id)}
-        >
-          View Details
-        </Button>
+        <Link href={`/tenants/${tenant.id}`} className="w-full">
+          <Button 
+            className="w-full" 
+            variant="outline"
+          >
+            View Details
+          </Button>
+        </Link>
       </div>
     </div>
   );

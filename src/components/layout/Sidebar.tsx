@@ -19,6 +19,7 @@ import {
   Key
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -35,19 +36,29 @@ const navigation = [
   { name: 'Team', href: '/team', icon: UserPlus },
   { name: 'Subscription', href: '/subscription', icon: Key },
   { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'License', href: '/license', icon: Key },
+  { name: 'Profile', href: '/profile', icon: User },
 ];
 
 const roleIcons = {
-  owner: Crown,
+  admin: Crown,
   manager: Shield,
   clerk: User,
 };
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const userRole = 'owner'; // This would come from auth context
+  const { data: session } = useSession();
+  const userRole = session?.user?.role || 'clerk'; // Default to clerk if role is not set
 
   const RoleIcon = roleIcons[userRole as keyof typeof roleIcons];
+
+  const filteredNavigation = navigation.filter(item => {
+    if (item.name === 'License' && session?.user?.role !== 'admin') {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <>
@@ -91,15 +102,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <RoleIcon className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">John Doe</p>
-              <p className="text-xs text-gray-500 capitalize">{userRole}</p>
+              <p className="text-sm font-medium text-gray-900">{session?.user?.name || 'Guest'}</p>
+              <p className="text-xs text-gray-500 capitalize">{session?.user?.email || 'N/A'}</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-1">
-          {navigation.map((item) => {
+          {filteredNavigation.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link

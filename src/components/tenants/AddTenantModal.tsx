@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 
 interface AddTenantModalProps {
   isOpen: boolean;
@@ -27,6 +27,7 @@ export function AddTenantModal({ isOpen, onClose }: AddTenantModalProps) {
     leaseEnd: '',
     securityDeposit: '',
     notes: '',
+    documents: [] as File[], // New field for documents
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,11 +49,27 @@ export function AddTenantModal({ isOpen, onClose }: AddTenantModalProps) {
       leaseEnd: '',
       securityDeposit: '',
       notes: '',
+      documents: [],
     });
   };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setFormData(prev => ({
+      ...prev,
+      documents: [...prev.documents, ...files]
+    }));
+  };
+
+  const removeDocument = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      documents: prev.documents.filter((_, i) => i !== index)
+    }));
   };
 
   return (
@@ -205,6 +222,46 @@ export function AddTenantModal({ isOpen, onClose }: AddTenantModalProps) {
               onChange={(e) => handleInputChange('notes', e.target.value)}
               rows={3}
             />
+          </div>
+
+          {/* Documents Upload */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900">Documents</h3>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
+              <p className="text-gray-600 mb-2">Drag and drop documents here, or click to browse</p>
+              <input
+                type="file"
+                multiple
+                onChange={handleDocumentUpload}
+                className="hidden"
+                id="document-upload"
+              />
+              <Label htmlFor="document-upload" className="cursor-pointer">
+                <Button type="button" variant="outline" asChild>
+                  <span>Choose Files</span>
+                </Button>
+              </Label>
+            </div>
+
+            {formData.documents.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Selected Documents:</p>
+                {formData.documents.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-md">
+                    <span className="text-sm text-gray-700">{file.name}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeDocument(index)}
+                    >
+                      <X className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Form Actions */}

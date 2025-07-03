@@ -20,9 +20,11 @@ import {
   User,
   Settings
 } from 'lucide-react';
+import { AddTeamMemberModal } from './AddTeamMemberModal';
 
 export function TeamView() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
   // Mock team members data
   const teamMembers = [
@@ -134,7 +136,10 @@ export function TeamView() {
           <h1 className="text-3xl font-bold text-gray-900">Team Management</h1>
           <p className="mt-2 text-gray-600">Manage your property management team</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setIsAddMemberModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Team Member
         </Button>
@@ -315,6 +320,11 @@ export function TeamView() {
           </CardContent>
         </Card>
       )}
+
+      <AddTeamMemberModal
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+      />
     </div>
   );
 }

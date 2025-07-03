@@ -3,11 +3,15 @@
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
+import AuthGuard from './AuthGuard';
+
 
 export default function Home() {
   return (
-    <DashboardLayout>
-      <DashboardOverview />
-    </DashboardLayout>
+    <AuthGuard>
+      <DashboardLayout>
+        <DashboardOverview />
+      </DashboardLayout>
+    </AuthGuard>
   );
 }

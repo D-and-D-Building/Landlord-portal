@@ -5,46 +5,42 @@ import { Button } from '@/components/ui/button';
 import { PropertyCard } from './PropertyCard';
 import { PropertyFilters } from './PropertyFilters';
 import { Plus, LayoutGrid, List } from 'lucide-react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis
+} from '@/components/ui/pagination';
+import { useProperty } from '@/context/PropertyContext';
 
 export function PropertiesView() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { state } = useProperty();
+  const properties = state.properties; // Get properties from context
 
-  // Mock property data
-  const properties = [
-    {
-      id: 1,
-      name: 'Sunset Apartments',
-      address: '123 Main Street, Downtown',
-      type: 'Apartment',
-      units: 24,
-      occupied: 22,
-      monthlyRevenue: 28800,
-      image: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800',
-      status: 'active' as const,
-    },
-    {
-      id: 2,
-      name: 'Riverside Condos',
-      address: '456 River Road, Riverside',
-      type: 'Condo',
-      units: 18,
-      occupied: 16,
-      monthlyRevenue: 32400,
-      image: 'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
-      status: 'active' as const,
-    },
-    {
-      id: 3,
-      name: 'Garden View Townhomes',
-      address: '789 Garden Lane, Suburbs',
-      type: 'Townhouse',
-      units: 12,
-      occupied: 10,
-      monthlyRevenue: 24000,
-      image: 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=800',
-      status: 'maintenance' as const,
-    },
-  ];
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6); // Number of properties to display per page
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const filteredProperties = properties.filter((property) => {
+    const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          property.address.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === '' || property.type.toLowerCase() === typeFilter;
+    const matchesStatus = statusFilter === '' || property.status === statusFilter;
+
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProperties = filteredProperties.slice(startIndex, endIndex);
 
   return (
     <div className="space-y-6">
@@ -62,8 +58,24 @@ export function PropertiesView() {
 
       {/* Filters and View Toggle */}
       <div className="flex items-center justify-between">
-        <PropertyFilters />
+        <PropertyFilters
+          onSearchChange={setSearchTerm}
+          onTypeChange={setTypeFilter}
+          onStatusChange={setStatusFilter}
+        />
         <div className="flex items-center space-x-2">
+          <select
+            className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1); // Reset to first page when items per page changes
+            }}
+          >
+            <option value={6}>6 per page</option>
+            <option value={12}>12 per page</option>
+            <option value={24}>24 per page</option>
+          </select>
           <Button
             variant={viewMode === 'grid' ? 'default' : 'outline'}
             size="sm"
@@ -87,7 +99,7 @@ export function PropertiesView() {
           ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
           : 'space-y-4'
       }>
-        {properties.map((property) => (
+        {currentProperties.map((property) => (
           <PropertyCard
             key={property.id}
             property={property}
@@ -95,6 +107,44 @@ export function PropertiesView() {
           />
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationPrevious 
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentPage(prev => Math.max(1, prev - 1));
+              }}
+              isActive={currentPage > 1}
+            />
+            {[...Array(totalPages)].map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink 
+                  href="#"
+                  isActive={index + 1 === currentPage}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage(index + 1);
+                  }}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationNext 
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentPage(prev => Math.min(totalPages, prev + 1));
+              }}
+              isActive={currentPage < totalPages}
+            />
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }

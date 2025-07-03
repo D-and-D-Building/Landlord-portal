@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { AddPropertyForm } from '@/components/properties/AddPropertyForm';
+import { MultiStepPropertyForm } from '@/components/properties/MultiStepPropertyForm';
 
 export default function NewPropertyPage() {
   return (
     <DashboardLayout>
-      <AddPropertyForm />
+      <MultiStepPropertyForm />
     </DashboardLayout>
   );
 }

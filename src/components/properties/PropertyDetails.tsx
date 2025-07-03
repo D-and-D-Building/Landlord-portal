@@ -17,9 +17,12 @@ import {
   Calendar,
   Phone,
   Mail,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import Image from 'next/image';
+import html2pdf from 'html2pdf.js';
+import { useProperty } from '@/context/PropertyContext';
 
 interface PropertyDetailsProps {
   propertyId: string;
@@ -28,29 +31,27 @@ interface PropertyDetailsProps {
 export function PropertyDetails({ propertyId }: PropertyDetailsProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const { state } = useProperty();
 
-  // Mock property data - in a real app, this would be fetched based on propertyId
-  const property = {
-    id: propertyId,
-    name: 'Sunset Apartments',
-    address: '123 Main Street, Downtown',
-    type: 'Apartment',
-    units: 24,
-    occupied: 22,
-    monthlyRevenue: 28800,
-    image: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800',
-    status: 'active' as const,
-    description: 'Modern apartment complex with excellent amenities and prime location.',
-    yearBuilt: 2018,
-    totalArea: '15,000 sq ft',
-    parkingSpaces: 30,
-    amenities: ['Pool', 'Gym', 'Laundry', 'Security', 'Parking'],
-    manager: {
-      name: 'Sarah Johnson',
-      phone: '+1 (555) 123-4567',
-      email: 'sarah@propertyhub.com'
-    }
-  };
+  const property = state.properties.find(p => p.id === propertyId);
+
+  if (!property) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="p-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900">Property Not Found</h1>
+        </div>
+        <p className="text-gray-600">The property with ID &quot;{propertyId}&quot; could not be found.</p>
+      </div>
+    );
+  }
 
   // Mock units data
   const units = [
@@ -71,6 +72,13 @@ export function PropertyDetails({ propertyId }: PropertyDetailsProps) {
       // In a real app, this would make an API call to delete the property
       alert('Property deleted successfully! (This is a demo)');
       router.push('/properties');
+    }
+  };
+
+  const handleExportPdf = () => {
+    const element = document.getElementById('property-details-content');
+    if (element) {
+      html2pdf().from(element).save(`property_${property.name.replace(/ /g, '_')}_details.pdf`);
     }
   };
 
@@ -141,6 +149,13 @@ export function PropertyDetails({ propertyId }: PropertyDetailsProps) {
           >
             <Edit className="h-4 w-4 mr-2" />
             Edit
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExportPdf}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export PDF
           </Button>
           <Button
             variant="destructive"

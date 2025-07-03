@@ -16,6 +16,7 @@ import {
   FileText,
   PieChart
 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 
 export function ReportsView() {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
@@ -121,8 +122,14 @@ export function ReportsView() {
     }
   ];
 
-  return (
-    <div className="space-y-6">
+  const handleExportPdf = () => {
+    const element = document.getElementById('reports-content');
+    if (element) {
+      html2pdf().from(element).save('landlord_portal_reports.pdf');
+    }
+  };
+      return (
+    <div className="space-y-6" id="reports-content">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -141,7 +148,7 @@ export function ReportsView() {
               <SelectItem value="year">This Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleExportPdf}>
             <Download className="h-4 w-4 mr-2" />
             Export All
           </Button>

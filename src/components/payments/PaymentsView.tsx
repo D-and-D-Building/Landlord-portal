@@ -16,10 +16,13 @@ import {
   TrendingUp,
   Calendar,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
+import { RecordPaymentModal } from './RecordPaymentModal';
 
 export function PaymentsView() {
+  const [isRecordPaymentModalOpen, setIsRecordPaymentModalOpen] = useState(false);
   // Mock payments data
   const payments = [
     {
@@ -141,10 +144,19 @@ export function PaymentsView() {
           <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
           <p className="mt-2 text-gray-600">Track and manage all payment transactions</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Download className="h-4 w-4 mr-2" />
-          Export Report
-        </Button>
+        <div className="flex items-center space-x-3">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Download className="h-4 w-4 mr-2" />
+            Export Report
+          </Button>
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => setIsRecordPaymentModalOpen(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Record Payment
+          </Button>
+        </div>
       </div>
 
       {/* Payment Summary */}
@@ -309,61 +321,14 @@ export function PaymentsView() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Trends</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Average Payment Amount</span>
-                    <span className="font-semibold">$1,875</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">On-time Payment Rate</span>
-                    <span className="font-semibold text-green-600">87%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Late Payment Rate</span>
-                    <span className="font-semibold text-amber-600">10%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Failed Payment Rate</span>
-                    <span className="font-semibold text-red-600">3%</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Comparison</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">This Month</span>
-                    <span className="font-semibold">${paymentSummary.thisMonth.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Last Month</span>
-                    <span className="font-semibold">$26,800</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Growth</span>
-                    <span className="font-semibold text-green-600">+6.0%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">YTD Total</span>
-                    <span className="font-semibold">$112,500</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
+        {/* ... existing content ... */}
+      </TabsContent>
       </Tabs>
+
+      <RecordPaymentModal
+        isOpen={isRecordPaymentModalOpen}
+        onClose={() => setIsRecordPaymentModalOpen(false)}
+      />
     </div>
   );
 }

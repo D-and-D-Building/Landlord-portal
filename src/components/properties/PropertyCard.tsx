@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, MapPin, Home, Users, DollarSign } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Property {
   id: number;
@@ -150,9 +151,11 @@ export function PropertyCard({ property, viewMode }: PropertyCardProps) {
           </div>
         </div>
 
-        <Button className="w-full" variant="outline">
-          View Details
-        </Button>
+        <Link href={`/properties/${property.id}`} className="w-full">
+          <Button className="w-full" variant="outline">
+            View Details
+          </Button>
+        </Link>
       </div>
     </div>
   );

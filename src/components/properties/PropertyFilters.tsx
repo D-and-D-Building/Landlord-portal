@@ -4,7 +4,17 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Filter, Search } from 'lucide-react';
 
-export function PropertyFilters() {
+interface PropertyFiltersProps {
+  onSearchChange: (searchTerm: string) => void;
+  onTypeChange: (type: string) => void;
+  onStatusChange: (status: string) => void;
+}
+
+export function PropertyFilters({
+  onSearchChange,
+  onTypeChange,
+  onStatusChange,
+}: PropertyFiltersProps) {
   return (
     <div className="flex items-center space-x-4">
       <div className="relative">
@@ -13,10 +23,14 @@ export function PropertyFilters() {
           type="text"
           placeholder="Search properties..."
           className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
       
-      <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      <select
+        className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        onChange={(e) => onTypeChange(e.target.value)}
+      >
         <option value="">All Types</option>
         <option value="apartment">Apartment</option>
         <option value="condo">Condo</option>
@@ -24,7 +38,10 @@ export function PropertyFilters() {
         <option value="single-family">Single Family</option>
       </select>
 
-      <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      <select
+        className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        onChange={(e) => onStatusChange(e.target.value)}
+      >
         <option value="">All Status</option>
         <option value="active">Active</option>
         <option value="maintenance">Maintenance</option>

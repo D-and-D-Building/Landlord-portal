@@ -17,8 +17,10 @@ import {
   Calendar,
   DollarSign,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 
 interface TenantDetailsProps {
   tenantId: string;
@@ -29,34 +31,112 @@ export function TenantDetails({ tenantId }: TenantDetailsProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   // Mock tenant data - in a real app, this would be fetched based on tenantId
-  const tenant = {
-    id: tenantId,
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@email.com',
-    phone: '+1 (555) 123-4567',
-    unit: 'Unit 4B',
-    property: 'Sunset Apartments',
-    propertyAddress: '123 Main Street, Downtown',
-    rentAmount: 1800,
-    leaseStart: '2024-01-15',
-    leaseEnd: '2024-12-31',
-    securityDeposit: 1800,
-    status: 'active' as const,
-    paymentStatus: 'paid' as const,
-    avatar: 'SJ',
-    emergencyContact: {
-      name: 'John Johnson',
-      relationship: 'Spouse',
-      phone: '+1 (555) 987-6543'
+  const mockTenants = [
+    {
+      id: '1',
+      name: 'Sarah Johnson',
+      email: 'sarah.johnson@email.com',
+      phone: '+1 (555) 123-4567',
+      unit: 'Unit 4B',
+      property: 'Sunset Apartments',
+      propertyAddress: '123 Main Street, Downtown',
+      rentAmount: 1800,
+      leaseStart: '2024-01-15',
+      leaseEnd: '2024-12-31',
+      securityDeposit: 1800,
+      status: 'active' as const,
+      paymentStatus: 'paid' as const,
+      avatar: 'SJ',
+      emergencyContact: {
+        name: 'John Johnson',
+        relationship: 'Spouse',
+        phone: '+1 (555) 987-6543'
+      },
+      employer: {
+        name: 'Tech Corp Inc.',
+        position: 'Software Engineer',
+        income: 75000
+      },
+      moveInDate: '2024-01-15',
+      notes: 'Excellent tenant, always pays on time. Has one small dog.'
     },
-    employer: {
-      name: 'Tech Corp Inc.',
-      position: 'Software Engineer',
-      income: 75000
+    {
+      id: '2',
+      name: 'Michael Rodriguez',
+      email: 'michael.r@email.com',
+      phone: '+1 (555) 987-6543',
+      unit: 'Unit 2A',
+      property: 'Riverside Condos',
+      propertyAddress: '456 River Road, Riverside',
+      rentAmount: 2200,
+      leaseStart: '2023-08-01',
+      leaseEnd: '2024-07-31',
+      securityDeposit: 2200,
+      status: 'active' as const,
+      paymentStatus: 'overdue' as const,
+      avatar: 'MR',
+      emergencyContact: {
+        name: 'Jane Rodriguez',
+        relationship: 'Sister',
+        phone: '+1 (555) 111-2222'
+      },
+      employer: {
+        name: 'Global Solutions',
+        position: 'Project Manager',
+        income: 85000
+      },
+      moveInDate: '2023-08-01',
+      notes: 'Needs reminder for rent. Quiet tenant.'
     },
-    moveInDate: '2024-01-15',
-    notes: 'Excellent tenant, always pays on time. Has one small dog.'
-  };
+    {
+      id: '3',
+      name: 'Alex Chen',
+      email: 'alex.chen@email.com',
+      phone: '+1 (555) 456-7890',
+      unit: 'Unit 7C',
+      property: 'Garden View Townhomes',
+      propertyAddress: '789 Garden Lane, Suburbs',
+      rentAmount: 2000,
+      leaseStart: '2024-03-01',
+      leaseEnd: '2025-02-28',
+      securityDeposit: 2000,
+      status: 'active' as const,
+      paymentStatus: 'pending' as const,
+      avatar: 'AC',
+      emergencyContact: {
+        name: 'Chris Chen',
+        relationship: 'Brother',
+        phone: '+1 (555) 333-4444'
+      },
+      employer: {
+        name: 'Creative Designs',
+        position: 'Graphic Designer',
+        income: 60000
+      },
+      moveInDate: '2024-03-01',
+      notes: 'New tenant, very organized.'
+    },
+  ];
+
+  const tenant = mockTenants.find(t => t.id === tenantId);
+
+  if (!tenant) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="p-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900">Tenant Not Found</h1>
+        </div>
+        <p className="text-gray-600">The tenant with ID &quot;{tenantId}&quot; could not be found.</p>
+      </div>
+    );
+  }
 
   // Mock payment history
   const paymentHistory = [
@@ -84,6 +164,13 @@ export function TenantDetails({ tenantId }: TenantDetailsProps) {
       // In a real app, this would make an API call to delete the tenant
       alert('Tenant removed successfully! (This is a demo)');
       router.push('/tenants');
+    }
+  };
+
+  const handleExportPdf = () => {
+    const element = document.getElementById('tenant-details-content');
+    if (element) {
+      html2pdf().from(element).save(`tenant_${tenant.name.replace(/ /g, '_')}_details.pdf`);
     }
   };
 
@@ -127,7 +214,7 @@ export function TenantDetails({ tenantId }: TenantDetailsProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="tenant-details-content">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -160,6 +247,13 @@ export function TenantDetails({ tenantId }: TenantDetailsProps) {
           >
             <Edit className="h-4 w-4 mr-2" />
             Edit
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExportPdf}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export PDF
           </Button>
           <Button
             variant="destructive"
@@ -376,14 +470,14 @@ export function TenantDetails({ tenantId }: TenantDetailsProps) {
             {documents.map((doc) => (
               <Card key={doc.id} className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
+                  <a href="/path/to/mock-document.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3">
                     <FileText className="h-8 w-8 text-blue-500" />
                     <div className="flex-1">
                       <h3 className="font-medium">{doc.name}</h3>
                       <p className="text-sm text-gray-600">{doc.type} • {doc.size}</p>
                       <p className="text-xs text-gray-500">{new Date(doc.date).toLocaleDateString()}</p>
                     </div>
-                  </div>
+                  </a>
                 </CardContent>
               </Card>
             ))}
